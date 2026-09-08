@@ -357,7 +357,7 @@ else:
             st.success("Solución del sistema:")
             st.write(sol)
         except Exception as e:
-            st.error(f>Error: {e})
+            st.error(f>Error {e})
 
 st.markdown("---")
 st.caption("Consola científica avanzada impulsada por Python y Streamlit.")
