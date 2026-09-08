@@ -6,7 +6,6 @@ import sympy as sp
 
 mpmath.mp.dps = 30
 
-# Configuración de página en modo ancho (wide) para permitir mayor expansión visual
 st.set_page_config(
     page_title="HyperCalc | Consola Científica Avanzada",
     page_icon="🧮",
@@ -335,7 +334,6 @@ elif modo == "Geometría Avanzada (GeoGebra)":
         "Utiliza la herramienta interactiva de GeoGebra expandida al máximo para ocupar toda la pantalla."
     )
 
-    # Contenedor con HTML y CSS nativo para forzar la inserción de GeoGebra a pantalla completa real (responsive height e iframe ampliado)
     geogebra_html = """
     <div style="width: 100%; height: 85vh; background-color: #161b22; border-radius: 10px; overflow: hidden; border: 1px solid #30363d;">
         <iframe src="https://www.geogebra.org/classic?embed" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>
@@ -357,7 +355,7 @@ else:
             st.success("Solución del sistema:")
             st.write(sol)
         except Exception as e:
-            st.error(f>Error {e})
+            st.error(f"Error: {e}")
 
 st.markdown("---")
 st.caption("Consola científica avanzada impulsada por Python y Streamlit.")
