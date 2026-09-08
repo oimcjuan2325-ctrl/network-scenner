@@ -1,5 +1,5 @@
 streamlit
-mpmath
 sympy
 numpy
 plotly
+mpmath
