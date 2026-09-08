@@ -132,7 +132,7 @@ if modo == "Calculadora Científica Interactiva":
     if t7.button("arcoseno("):
         add_sci("asin(")
     if t8.button("arcocoseno("):
-        add_sci("acos("):
+        add_sci("acos(")
     if t9.button("arcotangente("):
         add_sci("atan(")
 
