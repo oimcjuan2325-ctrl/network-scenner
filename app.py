@@ -1,14 +1,14 @@
 import mpmath
 import numpy as np
-import plotly.express as graph_plot
+import plotly.graph_objects as go
 import streamlit as st
 import sympy as sp
 
-# Configuración de precisión extrema con mpmath (50 decimales exactos)
-mpmath.mp.dps = 50
+# Configuración de precisión
+mpmath.mp.dps = 30
 
 st.set_page_config(
-    page_title="HyperCalc | Calculadora Científica de Alta Precisión",
+    page_title="HyperCalc | Consola Científica Avanzada",
     page_icon="🧮",
     layout="wide",
 )
@@ -18,100 +18,222 @@ st.markdown(
     <style>
     .main { background-color: #0e1117; }
     h1 { color: #00ffcc; }
-    .stTextInput input { background-color: #161b22; color: #ffffff; border: 1px solid #30363d; }
+    .stTextInput input, .stTextArea textarea { 
+        background-color: #161b22; 
+        color: #00ffcc; 
+        border: 1px solid #30363d; 
+        font-family: monospace;
+        font-size: 1.1rem;
+    }
+    div.stButton > button {
+        background-color: #21262d;
+        color: #c9d1d9;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+    div.stButton > button:hover {
+        background-color: #30363d;
+        color: #00ffcc;
+        border-color: #00ffcc;
+    }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
-st.title("🧮 Motor de Cálculo Científico y Simbólico de Alta Precisión")
+st.title("🧮 Consola Científica de Precisión & Motor Simbólico")
 st.markdown(
-    "Calculadora avanzada impulsada por aritmética de precisión arbitraria y motor de álgebra simbólica."
+    "Sistema de cálculo avanzado con teclado de símbolos matemáticos y representación en plano cartesiano interactivo."
 )
 st.markdown("---")
 
-# Panel lateral para elegir el modo de cálculo
-st.sidebar.header("⚙️ Modos de Operación")
+# Modo de operación principal
 modo = st.sidebar.selectbox(
-    "Selecciona el motor matemático:",
+    "Modo de Operación:",
     [
-        "Evaluador de Expresiones de Alta Precisión (50+ decimales)",
-        "Cálculo Simbólico (Derivadas e Integrales)",
+        "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano",
+        "Evaluador Numérico de Alta Precisión (30+ decimales)",
         "Resolución de Matrices y Sistemas Lineales",
     ],
 )
 
-if modo == "Evaluador de Expresiones de Alta Precisión (50+ decimales)":
-    st.subheader("🔬 Evaluador Numérico Extremo")
+if modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
+    st.subheader("∫ Motor Simbólico y Visualización Gráfica")
     st.markdown(
-        "Introduce funciones complejas (ej. `sin(pi/3) + log(100) + exp(2)`). El motor calculará el resultado con 50 decimales de precisión exacta."
+        "Introduce una función en términos de `x`. Puedes usar el teclado de símbolos para ayudarte."
     )
 
-    expr_input = st.text_input(
-        "Introduce la expresión matemática:", value="sin(pi/6) + sqrt(5)"
+    # Estado de sesión para conservar la función si se pulsa un botón de símbolo
+    if "expr_val" not in st.session_state:
+        st.session_state.expr_val = "x**3 - 3*x"
+
+    # --- TECLADO VIRTUAL DE SÍMBOLOS MATEMÁTICOS ---
+    st.markdown("**⌨️ Teclado de Símbolos Rápidos:**")
+    c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = st.columns(11)
+
+    # Nota: Streamlit recarga al pulsar un botón, usamos callbacks o actualizamos session_state
+    def add_symbol(sym):
+        st.session_state.expr_val += sym
+
+    if c1.button("x"):
+        add_symbol("x")
+    if c2.button("+"):
+        add_symbol("+")
+    if c3.button("-"):
+        add_symbol("-")
+    if c4.button("*"):
+        add_symbol("*")
+    if c5.button("/"):
+        add_symbol("/")
+    if c6.button("^"):
+        add_symbol("**")
+    if c7.button("sin("):
+        add_symbol("sin(x)")
+    if c8.button("cos("):
+        add_symbol("cos(x)")
+    if c9.button("log("):
+        add_symbol("log(x)")
+    if c10.button("exp("):
+        add_symbol("exp(x)")
+    if c11.button("Clear"):
+        st.session_state.expr_val = ""
+
+    # Cuadro de entrada conectado al state
+    func_input = st.text_input("Función f(x):", key="expr_val")
+
+    operacion = st.radio(
+        "Operación analítica:",
+        ["Derivada d/dx", "Integral Indefinida", "Solo Graficar Función"],
+        horizontal=True,
     )
 
-    if st.button("🚀 Calcular con Precisión Extrema", type="primary"):
-        try:
-            # Evaluación segura usando el entorno de mpmath
-            resultado = mpmath.nstr(mpmath.hypsec(expr_input) if False else eval(expr_input, {"__builtins__": None}, {
-                "sin": mpmath.sin,
-                "cos": mpmath.cos,
-                "tan": mpmath.tan,
-                "log": mpmath.log,
-                "exp": mpmath.exp,
-                "sqrt": mpmath.sqrt,
-                "pi": mpmath.pi,
-                "e": mpmath.e,
-                "factorial": mpmath.factorial,
-            }), 50)
-            
-            st.success("¡Cálculo completado sin pérdida de coma flotante!")
-            st.markdown("### 🎯 Resultado Exacto (50 decimales):")
-            st.code(resultado, language="text")
-        except Exception as e:
-            st.error(f"Error de sintaxis o cálculo: {e}")
+    x = sp.Symbol("x")
 
-elif modo == "Cálculo Simbólico (Derivadas e Integrales)":
-    st.subheader("∫ Cálculo Diferencial e Integral Simbólico")
-    st.markdown("Introduce una función en términos de `x` para derivarla o integrarla de forma exacta.")
-
-    func_input = st.text_input("Función f(x):", value="x**3 * sin(x)")
-    operacion = st.radio("Operación a realizar:", ["Derivada d/dx", "Integral Indefinida"])
-
-    x = sp.Symbol('x')
-    
-    if st.button("⚙️ Procesar Cálculo Simbólico", type="primary"):
+    if st.button("🚀 Procesar Análisis y Plano Cartesiano", type="primary"):
         try:
             expr = sp.sympify(func_input)
+
+            # Mostrar resultado analítico según la opción
+            st.markdown("---")
+            st.subheader("📊 Resultados Analíticos")
+
+            resultado_calculo = expr
             if operacion == "Derivada d/dx":
-                res = sp.diff(expr, x)
-                st.success("¡Derivada calculada con éxito!")
-                st.latex(f"\\frac{d}{dx} ({sp.latex(expr)}) = {sp.latex(res)}")
+                resultado_calculo = sp.diff(expr, x)
+                st.latex(
+                    f"\\frac{{d}}{{dx}} \\left( {sp.latex(expr)} \\right) = {sp.latex(resultado_calculo)}"
+                )
+            elif operacion == "Integral Indefinida":
+                resultado_calculo = sp.integrate(expr, x)
+                st.latex(
+                    f"\\int \\left( {sp.latex(expr)} \\right) \\, dx = {sp.latex(resultado_calculo)} + C"
+                )
             else:
-                res = sp.integrate(expr, x)
-                st.success("¡Integral calculada con éxito!")
-                st.latex(f"\\int ({sp.latex(expr)}) \, dx = {sp.latex(res)} + C")
+                st.latex(f"f(x) = {sp.latex(expr)}")
+
+            # --- PLANO CARTESIANO INTERACTIVO ---
+            st.markdown("---")
+            st.subheader("📈 Plano Cartesiano (Gráfica Interactiva)")
+
+            # Convertir la expresión de SymPy a una función numérica utilizable en NumPy
+            f_lambdified = sp.lambdify(x, expr, modules=["numpy"])
+
+            # Rango del eje X para el plano cartesiano
+            x_vals = np.linspace(-10, 10, 400)
+            try:
+                y_vals = f_lambdified(x_vals)
+
+                # Crear gráfica con Plotly (Plano cartesiano profesional)
+                fig = go.Figure()
+                fig.add_trace(
+                    go.Scatter(
+                        x=x_vals,
+                        y=y_vals,
+                        mode="lines",
+                        name=f"f(x) = {func_input}",
+                        line=dict(color="#00ffcc", width=3),
+                    )
+                )
+
+                # Configurar ejes estilo plano cartesiano (con líneas de referencia en 0)
+                fig.update_layout(
+                    title="Representación en el Plano Cartesiano 2D",
+                    xaxis_title="Eje X",
+                    yaxis_title="Eje Y",
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="#161b22",
+                    font_color="white",
+                    xaxis=dict(
+                        zeroline=True,
+                        zerolinewidth=2,
+                        zerolinecolor="gray",
+                        gridcolor="#30363d",
+                    ),
+                    yaxis=dict(
+                        zeroline=True,
+                        zerolinewidth=2,
+                        zerolinecolor="gray",
+                        gridcolor="#30363d",
+                    ),
+                )
+
+                st.plotly_chart(fig, use_container_width=True)
+
+            except Exception as plot_err:
+                st.warning(
+                    f"No se pudo renderizar la gráfica para este rango: {plot_err}"
+                )
+
         except Exception as e:
-            st.error(f"No se pudo procesar la expresión simbólica: {e}")
+            st.error(f"Error de sintaxis matemática: {e}")
+
+elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
+    st.subheader("🔬 Evaluador Numérico Extremo")
+    expr_num = st.text_input(
+        "Introduce expresión:", value="sin(pi/6) + sqrt(10)"
+    )
+    if st.button("Calcular con 30 decimales", type="primary"):
+        try:
+            res = mpmath.nstr(
+                eval(
+                    expr_num,
+                    {"__builtins__": None},
+                    {
+                        "sin": mpmath.sin,
+                        "cos": mpmath.cos,
+                        "tan": mpmath.tan,
+                        "log": mpmath.log,
+                        "exp": mpmath.exp,
+                        "sqrt": mpmath.sqrt,
+                        "pi": mpmath.pi,
+                        "e": mpmath.e,
+                    },
+                ),
+                30,
+            )
+            st.success("Resultado de alta precisión:")
+            st.code(res, language="text")
+        except Exception as e:
+            st.error(f"Error: {e}")
 
 else:
-    st.subheader("📐 Resolución de Sistemas de Ecuaciones Lineales")
-    st.markdown("Introduce una matriz de coeficientes para resolver sistemas de alta dimensión.")
-    
-    matriz_texto = st.text_area("Matriz A (separada por comas y saltos de línea):", value="2, 1\n1, 3")
-    vector_texto = st.text_input("Vector B (separado por comas):", value="5, 5")
-
-    if st.button("📊 Resolver Sistema", type="primary"):
+    st.subheader("📐 Resolución de Sistemas Lineales")
+    matriz_txt = st.text_area("Matriz A (ej: 2,1 / 1,3):", value="2, 1\n1, 3")
+    vector_txt = st.text_input("Vector B (ej: 5,5):", value="5, 5")
+    if st.button("Resolver Sistema", type="primary"):
         try:
-            A = np.array([[float(num) for num in linea.split(',')] for linea in matriz_texto.split('\n')])
-            B = np.array([float(num) for num in vector_texto.split(',')])
-            
-            solucion = np.linalg.solve(A, B)
-            st.success("¡Sistema resuelto correctamente!")
-            st.write("Solución del vector X:", solucion)
+            A = np.array(
+                [[float(n) for n in l.split(",")] for l in matriz_txt.split("\n")]
+            )
+            B = np.array([float(n) for n in vector_txt.split(",")])
+            sol = np.linalg.solve(A, B)
+            st.success("Solución del sistema:")
+            st.write(sol)
         except Exception as e:
-            st.error(f"Error al resolver la matriz: {e}")
+            st.error(f"Error: {e}")
 
 st.markdown("---")
-st.caption("Desarrollado en Python con librerías de cálculo científico de alto rendimiento.")
+st.caption(
+    "Motor de cálculo simbólico y visualización matemática impulsado por Python."
+)
