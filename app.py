@@ -6,6 +6,7 @@ import sympy as sp
 
 mpmath.mp.dps = 30
 
+# Configuración de página en modo ancho (wide) para permitir mayor expansión visual
 st.set_page_config(
     page_title="HyperCalc | Consola Científica Avanzada",
     page_icon="🧮",
@@ -260,7 +261,6 @@ elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
         "Mueve los controles deslizantes o edita los parámetros para transformar el dibujo en tiempo real; la fórmula analítica se actualizará automáticamente."
     )
 
-    # Control interactivo de coeficientes para modelar dinámicamente el plano y la fórmula
     col_param1, col_param2, col_param3, col_param4 = st.columns(4)
     with col_param1:
         coef_a = st.slider("Coeficiente a (Curvatura)", -5.0, 5.0, 1.0, 0.1)
@@ -271,7 +271,6 @@ elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
     with col_param4:
         shift_x = st.slider("Desplazamiento X", -5.0, 5.0, 0.0, 0.5)
 
-    # Construir la función dinámica basada en los controles del plano cartesiano
     func_input = f"{coef_a}*(x - {shift_x})**2 + {coef_b}*(x - {shift_x}) + {coef_c}"
     st.info(f"📌 **Fórmula Actualizada Automáticamente:** `f(x) = {func_input}`")
 
@@ -285,15 +284,9 @@ elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
         derivada = sp.diff(expr, x)
         integral = sp.integrate(expr, x)
 
-        st.latex(
-            f"f(x) = {sp.latex(expr)}"
-        )
-        st.latex(
-            f"\\frac{{d}}{{dx}} f(x) = {sp.latex(derivada)}"
-        )
-        st.latex(
-            f"\\int f(x) \\, dx = {sp.latex(integral)} + C"
-        )
+        st.latex(f"f(x) = {sp.latex(expr)}")
+        st.latex(f"\\frac{{d}}{{dx}} f(x) = {sp.latex(derivada)}")
+        st.latex(f"\\int f(x) \\, dx = {sp.latex(integral)} + C")
 
         st.markdown("---")
         st.subheader("📈 Plano Cartesiano Dinámico e Interactivo")
@@ -337,14 +330,18 @@ elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
         st.error(f"Error al procesar la función dinámica: {e}")
 
 elif modo == "Geometría Avanzada (GeoGebra)":
-    st.subheader("📐 Entorno de Geometría Avanzada (GeoGebra integrado)")
+    st.subheader("📐 Entorno de Geometría Avanzada (GeoGebra en Pantalla Completa)")
     st.markdown(
-        "Utiliza la plataforma oficial de GeoGebra directamente integrada en la aplicación web para construcciones geométricas, vectores, cónicas y análisis 3D."
+        "Utiliza la herramienta interactiva de GeoGebra expandida al máximo para ocupar toda la pantalla."
     )
-    # Incrustar GeoGebra Classic de forma interactiva
-    st.components.v1.iframe(
-        "https://www.geogebra.org/classic?embed", height=700, scrolling=True
-    )
+
+    # Contenedor con HTML y CSS nativo para forzar la inserción de GeoGebra a pantalla completa real (responsive height e iframe ampliado)
+    geogebra_html = """
+    <div style="width: 100%; height: 85vh; background-color: #161b22; border-radius: 10px; overflow: hidden; border: 1px solid #30363d;">
+        <iframe src="https://www.geogebra.org/classic?embed" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>
+    </div>
+    """
+    st.components.v1.html(geogebra_html, height=750, scrolling=False)
 
 else:
     st.subheader("📐 Resolución de Sistemas Lineales")
@@ -360,7 +357,7 @@ else:
             st.success("Solución del sistema:")
             st.write(sol)
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f>Error: {e}")
 
 st.markdown("---")
 st.caption("Consola científica avanzada impulsada por Python y Streamlit.")
