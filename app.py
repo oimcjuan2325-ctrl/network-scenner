@@ -4,7 +4,6 @@ import plotly.graph_objects as go
 import streamlit as st
 import sympy as sp
 
-# Configuración de precisión
 mpmath.mp.dps = 30
 
 st.set_page_config(
@@ -44,155 +43,199 @@ st.markdown(
 
 st.title("🧮 Consola Científica de Precisión & Motor Simbólico")
 st.markdown(
-    "Sistema de cálculo avanzado con teclado de símbolos matemáticos y representación en plano cartesiano interactivo."
+    "Sistema de cálculo avanzado con teclados virtuales especializados y representación en plano cartesiano."
 )
 st.markdown("---")
 
-# Modo de operación principal
 modo = st.sidebar.selectbox(
     "Modo de Operación:",
     [
-        "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano",
+        "Calculadora Científica Interactiva",
         "Evaluador Numérico de Alta Precisión (30+ decimales)",
+        "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano",
         "Resolución de Matrices y Sistemas Lineales",
     ],
 )
 
-if modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
-    st.subheader("∫ Motor Simbólico y Visualización Gráfica")
+if modo == "Calculadora Científica Interactiva":
+    st.subheader("🔢 Calculadora Científica de Alta Precisión")
     st.markdown(
-        "Introduce una función en términos de `x`. Puedes usar el teclado de símbolos para ayudarte."
+        "Utiliza el teclado virtual especializado para realizar operaciones científicas completas."
     )
 
-    # Estado de sesión para conservar la función si se pulsa un botón de símbolo
-    if "expr_val" not in st.session_state:
-        st.session_state.expr_val = "x**3 - 3*x"
+    if "sci_val" not in st.session_state:
+        st.session_state.sci_val = ""
 
-    # --- TECLADO VIRTUAL DE SÍMBOLOS MATEMÁTICOS ---
-    st.markdown("**⌨️ Teclado de Símbolos Rápidos:**")
-    c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = st.columns(11)
+    def add_sci(val):
+        st.session_state.sci_val += val
 
-    # Nota: Streamlit recarga al pulsar un botón, usamos callbacks o actualizamos session_state
-    def add_symbol(sym):
-        st.session_state.expr_val += sym
+    st.markdown("**⌨️ Teclado Científico Extendido:**")
 
-    if c1.button("x"):
-        add_symbol("x")
-    if c2.button("+"):
-        add_symbol("+")
-    if c3.button("-"):
-        add_symbol("-")
-    if c4.button("*"):
-        add_symbol("*")
-    if c5.button("/"):
-        add_symbol("/")
-    if c6.button("^"):
-        add_symbol("**")
-    if c7.button("sin("):
-        add_symbol("sin(x)")
-    if c8.button("cos("):
-        add_symbol("cos(x)")
-    if c9.button("log("):
-        add_symbol("log(x)")
-    if c10.button("exp("):
-        add_symbol("exp(x)")
-    if c11.button("Clear"):
-        st.session_state.expr_val = ""
+    # Fila de números y operaciones básicas
+    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    if c1.button("7"):
+        add_sci("7")
+    if c2.button("8"):
+        add_sci("8")
+    if c3.button("9"):
+        add_sci("9")
+    if c4.button("+"):
+        add_sci("+")
+    if c5.button("-"):
+        add_sci("-")
+    if c6.button("C (Clear)"):
+        st.session_state.sci_val = ""
 
-    # Cuadro de entrada conectado al state
-    func_input = st.text_input("Función f(x):", key="expr_val")
+    c7, c8, c9, c10, c11, c12 = st.columns(6)
+    if c7.button("4"):
+        add_sci("4")
+    if c8.button("5"):
+        add_sci("5")
+    if c9.button("6"):
+        add_sci("6")
+    if c10.button("*"):
+        add_sci("*")
+    if c11.button("/"):
+        add_sci("/")
+    if c12.button("("):
+        add_sci("(")
 
-    operacion = st.radio(
-        "Operación analítica:",
-        ["Derivada d/dx", "Integral Indefinida", "Solo Graficar Función"],
-        horizontal=True,
-    )
+    c13, c14, c15, c16, c17, c18 = st.columns(6)
+    if c13.button("1"):
+        add_sci("1")
+    if c14.button("2"):
+        add_sci("2")
+    if c15.button("3"):
+        add_sci("3")
+    if c16.button("0"):
+        add_sci("0")
+    if c17.button("."):
+        add_sci(".")
+    if c18.button(")"):
+        add_sci(")")
 
-    x = sp.Symbol("x")
+    # Fila de funciones trigonométricas y avanzadas
+    st.markdown("**Trigonometría e Hiperbólicas:**")
+    t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.columns(9)
+    if t1.button("sen("):
+        add_sci("sin(")
+    if t2.button("cos("):
+        add_sci("cos(")
+    if t3.button("tan("):
+        add_sci("tan(")
+    if t4.button("senh("):
+        add_sci("sinh(")
+    if t5.button("cosh("):
+        add_sci("cosh(")
+    if t6.button("tanh("):
+        add_sci("tanh(")
+    if t7.button("arcoseno("):
+        add_sci("asin(")
+    if t8.button("arcocoseno("):
+        add_sci("acos("):
+    if t9.button("arcotangente("):
+        add_sci("atan(")
 
-    if st.button("🚀 Procesar Análisis y Plano Cartesiano", type="primary"):
+    # Fila de potencias, raíces, logaritmos y constantes
+    st.markdown("**Potencias, Raíces y Logaritmos:**")
+    p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 = st.columns(12)
+    if p1.button("sqrt("):
+        add_sci("sqrt(")
+    if p2.button("raices cubicas("):
+        add_sci("cbrt(")
+    if p3.button("potencias"):
+        add_sci("**")
+    if p4.button("fracciones"):
+        add_sci("/")
+    if p5.button("!"):
+        add_sci("factorial(")
+    if p6.button("%"):
+        add_sci("%")
+    if p7.button("lg("):
+        add_sci("log10(")
+    if p8.button("ln("):
+        add_sci("ln(")
+    if p9.button("log("):
+        add_sci("log(")
+    if p10.button("pi"):
+        add_sci("pi")
+    if p11.button("euler"):
+        add_sci("e")
+    if p12.button("x"):
+        add_sci("x")
+
+    # Variables auxiliares a, b, c
+    v1, v2, v3 = st.columns(3)
+    if v1.button("a"):
+        add_sci("a")
+    if v2.button("b"):
+        add_sci("b")
+    if v3.button("c"):
+        add_sci("c")
+
+    sci_input = st.text_input("Expresión Científica:", key="sci_val")
+
+    if st.button("🚀 Calcular Resultado Científico", type="primary"):
         try:
-            expr = sp.sympify(func_input)
-
-            # Mostrar resultado analítico según la opción
-            st.markdown("---")
-            st.subheader("📊 Resultados Analíticos")
-
-            resultado_calculo = expr
-            if operacion == "Derivada d/dx":
-                resultado_calculo = sp.diff(expr, x)
-                st.latex(
-                    f"\\frac{{d}}{{dx}} \\left( {sp.latex(expr)} \\right) = {sp.latex(resultado_calculo)}"
-                )
-            elif operacion == "Integral Indefinida":
-                resultado_calculo = sp.integrate(expr, x)
-                st.latex(
-                    f"\\int \\left( {sp.latex(expr)} \\right) \\, dx = {sp.latex(resultado_calculo)} + C"
-                )
-            else:
-                st.latex(f"f(x) = {sp.latex(expr)}")
-
-            # --- PLANO CARTESIANO INTERACTIVO ---
-            st.markdown("---")
-            st.subheader("📈 Plano Cartesiano (Gráfica Interactiva)")
-
-            # Convertir la expresión de SymPy a una función numérica utilizable en NumPy
-            f_lambdified = sp.lambdify(x, expr, modules=["numpy"])
-
-            # Rango del eje X para el plano cartesiano
-            x_vals = np.linspace(-10, 10, 400)
-            try:
-                y_vals = f_lambdified(x_vals)
-
-                # Crear gráfica con Plotly (Plano cartesiano profesional)
-                fig = go.Figure()
-                fig.add_trace(
-                    go.Scatter(
-                        x=x_vals,
-                        y=y_vals,
-                        mode="lines",
-                        name=f"f(x) = {func_input}",
-                        line=dict(color="#00ffcc", width=3),
-                    )
-                )
-
-                # Configurar ejes estilo plano cartesiano (con líneas de referencia en 0)
-                fig.update_layout(
-                    title="Representación en el Plano Cartesiano 2D",
-                    xaxis_title="Eje X",
-                    yaxis_title="Eje Y",
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="#161b22",
-                    font_color="white",
-                    xaxis=dict(
-                        zeroline=True,
-                        zerolinewidth=2,
-                        zerolinecolor="gray",
-                        gridcolor="#30363d",
-                    ),
-                    yaxis=dict(
-                        zeroline=True,
-                        zerolinewidth=2,
-                        zerolinecolor="gray",
-                        gridcolor="#30363d",
-                    ),
-                )
-
-                st.plotly_chart(fig, use_container_width=True)
-
-            except Exception as plot_err:
-                st.warning(
-                    f"No se pudo renderizar la gráfica para este rango: {plot_err}"
-                )
-
+            res_sci = mpmath.nstr(
+                eval(
+                    sci_input,
+                    {"__builtins__": None},
+                    {
+                        "sin": mpmath.sin,
+                        "cos": mpmath.cos,
+                        "tan": mpmath.tan,
+                        "sinh": mpmath.sinh,
+                        "cosh": mpmath.cosh,
+                        "tanh": mpmath.tanh,
+                        "asin": mpmath.asin,
+                        "acos": mpmath.acos,
+                        "atan": mpmath.atan,
+                        "sqrt": mpmath.sqrt,
+                        "cbrt": lambda x: mpmath.power(x, 1 / 3),
+                        "factorial": mpmath.factorial,
+                        "log10": mpmath.log10,
+                        "ln": mpmath.ln,
+                        "log": mpmath.log,
+                        "pi": mpmath.pi,
+                        "e": mpmath.e,
+                        "x": 1,
+                        "a": 1,
+                        "b": 1,
+                        "c": 1,
+                    },
+                ),
+                30,
+            )
+            st.success("¡Resultado calculado con éxito!")
+            st.code(res_sci, language="text")
         except Exception as e:
-            st.error(f"Error de sintaxis matemática: {e}")
+            st.error(f"Error de sintaxis científica: {e}")
 
 elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
-    st.subheader("🔬 Evaluador Numérico Extremo")
-    expr_num = st.text_input(
-        "Introduce expresión:", value="sin(pi/6) + sqrt(10)"
-    )
+    st.subheader("🔬 Evaluador Numérico Extremo con Operadores")
+
+    if "num_val" not in st.session_state:
+        st.session_state.num_val = "sin(pi/6) + sqrt(10)"
+
+    def add_num(val):
+        st.session_state.num_val += val
+
+    st.markdown("**⌨️ Teclado de Operadores Básicos:**")
+    b1, b2, b3, b4, b5 = st.columns(5)
+    if b1.button("➕ (+)"):
+        add_num("+")
+    if b2.button("➖ (-)"):
+        add_num("-")
+    if b3.button("✖️ (*)"):
+        add_num("*")
+    if b4.button("➗ (/)"):
+        add_num("/")
+    if b5.button("🗑️ Clear"):
+        st.session_state.num_val = ""
+
+    expr_num = st.text_input("Introduce expresión:", key="num_val")
+
     if st.button("Calcular con 30 decimales", type="primary"):
         try:
             res = mpmath.nstr(
@@ -217,6 +260,111 @@ elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
         except Exception as e:
             st.error(f"Error: {e}")
 
+elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
+    st.subheader("∫ Motor Simbólico y Visualización Gráfica")
+
+    if "expr_val" not in st.session_state:
+        st.session_state.expr_val = "x**3 - 3*x"
+
+    def add_symbol(sym):
+        st.session_state.expr_val += sym
+
+    st.markdown("**⌨️ Teclado de Símbolos Rápidos:**")
+    c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = st.columns(11)
+
+    if c1.button("x"):
+        add_symbol("x")
+    if c2.button("+"):
+        add_symbol("+")
+    if c3.button("-"):
+        add_symbol("-")
+    if c4.button("*"):
+        add_symbol("*")
+    if c5.button("/"):
+        add_symbol("/")
+    if c6.button("^"):
+        add_symbol("**")
+    if c7.button("sin("):
+        add_symbol("sin(x)")
+    if c8.button("cos("):
+        add_symbol("cos(x)")
+    if c9.button("log("):
+        add_symbol("log(x)")
+    if c10.button("exp("):
+        add_symbol("exp(x)")
+    if c11.button("Clear"):
+        st.session_state.expr_val = ""
+
+    func_input = st.text_input("Función f(x):", key="expr_val")
+    operacion = st.radio(
+        "Operación analítica:",
+        ["Derivada d/dx", "Integral Indefinida", "Solo Graficar Función"],
+        horizontal=True,
+    )
+
+    x = sp.Symbol("x")
+
+    if st.button("🚀 Procesar Análisis y Plano Cartesiano", type="primary"):
+        try:
+            expr = sp.sympify(func_input)
+            st.markdown("---")
+            st.subheader("📊 Resultados Analíticos")
+
+            resultado_calculo = expr
+            if operacion == "Derivada d/dx":
+                resultado_calculo = sp.diff(expr, x)
+                st.latex(
+                    f"\\frac{{d}}{{dx}} \\left( {sp.latex(expr)} \\right) = {sp.latex(resultado_calculo)}"
+                )
+            elif operacion == "Integral Indefinida":
+                resultado_calculo = sp.integrate(expr, x)
+                st.latex(
+                    f"\\int \\left( {sp.latex(expr)} \\right) \\, dx = {sp.latex(resultado_calculo)} + C"
+                )
+            else:
+                st.latex(f"f(x) = {sp.latex(expr)}")
+
+            st.markdown("---")
+            st.subheader("📈 Plano Cartesiano (Gráfica Interactiva)")
+
+            f_lambdified = sp.lambdify(x, expr, modules=["numpy"])
+            x_vals = np.linspace(-10, 10, 400)
+            y_vals = f_lambdified(x_vals)
+
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=x_vals,
+                    y=y_vals,
+                    mode="lines",
+                    name=f"f(x) = {func_input}",
+                    line=dict(color="#00ffcc", width=3),
+                )
+            )
+            fig.update_layout(
+                title="Representación en el Plano Cartesiano 2D",
+                xaxis_title="Eje X",
+                yaxis_title="Eje Y",
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="#161b22",
+                font_color="white",
+                xaxis=dict(
+                    zeroline=True,
+                    zerolinewidth=2,
+                    zerolinecolor="gray",
+                    gridcolor="#30363d",
+                ),
+                yaxis=dict(
+                    zeroline=True,
+                    zerolinewidth=2,
+                    zerolinecolor="gray",
+                    gridcolor="#30363d",
+                ),
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        except Exception as e:
+            st.error(f"Error de sintaxis matemática: {e}")
+
 else:
     st.subheader("📐 Resolución de Sistemas Lineales")
     matriz_txt = st.text_area("Matriz A (ej: 2,1 / 1,3):", value="2, 1\n1, 3")
@@ -234,6 +382,4 @@ else:
             st.error(f"Error: {e}")
 
 st.markdown("---")
-st.caption(
-    "Motor de cálculo simbólico y visualización matemática impulsado por Python."
-)
+st.caption("Consola científica avanzada impulsada por Python y Streamlit.")
