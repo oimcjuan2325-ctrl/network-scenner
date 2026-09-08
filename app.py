@@ -43,7 +43,7 @@ st.markdown(
 
 st.title("🧮 Consola Científica de Precisión & Motor Simbólico")
 st.markdown(
-    "Sistema de cálculo avanzado con teclados virtuales especializados y representación en plano cartesiano."
+    "Sistema de cálculo avanzado con teclados virtuales, plano interactivo dinámico y GeoGebra integrado."
 )
 st.markdown("---")
 
@@ -53,7 +53,8 @@ modo = st.sidebar.selectbox(
         "Calculadora Científica Interactiva",
         "Evaluador Numérico de Alta Precisión (30+ decimales)",
         "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano",
-        "Resolución de Matrices y Sistemas Lineales",
+        "Geometría Avanzada (GeoGebra)",
+        "Resolución de Sistemas Lineales",
     ],
 )
 
@@ -71,7 +72,6 @@ if modo == "Calculadora Científica Interactiva":
 
     st.markdown("**⌨️ Teclado Científico Extendido:**")
 
-    # Fila de números y operaciones básicas
     c1, c2, c3, c4, c5, c6 = st.columns(6)
     if c1.button("7"):
         add_sci("7")
@@ -114,7 +114,6 @@ if modo == "Calculadora Científica Interactiva":
     if c18.button(")"):
         add_sci(")")
 
-    # Fila de funciones trigonométricas y avanzadas
     st.markdown("**Trigonometría e Hiperbólicas:**")
     t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.columns(9)
     if t1.button("sen("):
@@ -136,7 +135,6 @@ if modo == "Calculadora Científica Interactiva":
     if t9.button("arcotangente("):
         add_sci("atan(")
 
-    # Fila de potencias, raíces, logaritmos y constantes
     st.markdown("**Potencias, Raíces y Logaritmos:**")
     p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 = st.columns(12)
     if p1.button("sqrt("):
@@ -164,7 +162,6 @@ if modo == "Calculadora Científica Interactiva":
     if p12.button("x"):
         add_sci("x")
 
-    # Variables auxiliares a, b, c
     v1, v2, v3 = st.columns(3)
     if v1.button("a"):
         add_sci("a")
@@ -176,41 +173,40 @@ if modo == "Calculadora Científica Interactiva":
     sci_input = st.text_input("Expresión Científica:", key="sci_val")
 
     if st.button("🚀 Calcular Resultado Científico", type="primary"):
-        try:
-            res_sci = mpmath.nstr(
-                eval(
-                    sci_input,
-                    {"__builtins__": None},
-                    {
-                        "sin": mpmath.sin,
-                        "cos": mpmath.cos,
-                        "tan": mpmath.tan,
-                        "sinh": mpmath.sinh,
-                        "cosh": mpmath.cosh,
-                        "tanh": mpmath.tanh,
-                        "asin": mpmath.asin,
-                        "acos": mpmath.acos,
-                        "atan": mpmath.atan,
-                        "sqrt": mpmath.sqrt,
-                        "cbrt": lambda x: mpmath.power(x, 1 / 3),
-                        "factorial": mpmath.factorial,
-                        "log10": mpmath.log10,
-                        "ln": mpmath.ln,
-                        "log": mpmath.log,
-                        "pi": mpmath.pi,
-                        "e": mpmath.e,
-                        "x": 1,
-                        "a": 1,
-                        "b": 1,
-                        "c": 1,
-                    },
-                ),
-                30,
-            )
-            st.success("¡Resultado calculado con éxito!")
-            st.code(res_sci, language="text")
-        except Exception as e:
-            st.error(f"Error de sintaxis científica: {e}")
+        if not sci_input.strip():
+            st.warning("Por favor, introduce alguna expresión para calcular.")
+        else:
+            try:
+                safe_dict = {
+                    "sin": mpmath.sin,
+                    "cos": mpmath.cos,
+                    "tan": mpmath.tan,
+                    "sinh": mpmath.sinh,
+                    "cosh": mpmath.cosh,
+                    "tanh": mpmath.tanh,
+                    "asin": mpmath.asin,
+                    "acos": mpmath.acos,
+                    "atan": mpmath.atan,
+                    "sqrt": mpmath.sqrt,
+                    "cbrt": lambda val: mpmath.power(val, 1 / 3),
+                    "factorial": mpmath.factorial,
+                    "log10": mpmath.log10,
+                    "ln": mpmath.ln,
+                    "log": mpmath.log,
+                    "pi": mpmath.pi,
+                    "e": mpmath.e,
+                    "x": 1,
+                    "a": 1,
+                    "b": 1,
+                    "c": 1,
+                    "__builtins__": None,
+                }
+                resultado_eval = eval(sci_input, safe_dict, {})
+                res_sci = mpmath.nstr(resultado_eval, 30)
+                st.success("¡Resultado calculado con éxito!")
+                st.code(res_sci, language="text")
+            except Exception as e:
+                st.error(f"Error en el cálculo: {e}")
 
 elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
     st.subheader("🔬 Evaluador Numérico Extremo con Operadores")
@@ -221,8 +217,7 @@ elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
     def add_num(val):
         st.session_state.num_val += val
 
-    st.markdown("**⌨️ Teclado de Operadores Básicos:**")
-    b1, b2, b3, b4, b5 = st.columns(5)
+    b1, b2, b3, b4, b5, b6, b7 = st.columns(7)
     if b1.button("➕ (+)"):
         add_num("+")
     if b2.button("➖ (-)"):
@@ -231,139 +226,125 @@ elif modo == "Evaluador Numérico de Alta Precisión (30+ decimales)":
         add_num("*")
     if b4.button("➗ (/)"):
         add_num("/")
-    if b5.button("🗑️ Clear"):
+    if b5.button("("):
+        add_num("(")
+    if b6.button(")"):
+        add_num(")")
+    if b7.button("🗑️ Clear"):
         st.session_state.num_val = ""
 
     expr_num = st.text_input("Introduce expresión:", key="num_val")
 
     if st.button("Calcular con 30 decimales", type="primary"):
         try:
-            res = mpmath.nstr(
-                eval(
-                    expr_num,
-                    {"__builtins__": None},
-                    {
-                        "sin": mpmath.sin,
-                        "cos": mpmath.cos,
-                        "tan": mpmath.tan,
-                        "log": mpmath.log,
-                        "exp": mpmath.exp,
-                        "sqrt": mpmath.sqrt,
-                        "pi": mpmath.pi,
-                        "e": mpmath.e,
-                    },
-                ),
-                30,
-            )
+            safe_dict_num = {
+                "sin": mpmath.sin,
+                "cos": mpmath.cos,
+                "tan": mpmath.tan,
+                "log": mpmath.log,
+                "exp": mpmath.exp,
+                "sqrt": mpmath.sqrt,
+                "pi": mpmath.pi,
+                "e": mpmath.e,
+                "__builtins__": None,
+            }
+            res = mpmath.nstr(eval(expr_num, safe_dict_num, {}), 30)
             st.success("Resultado de alta precisión:")
             st.code(res, language="text")
         except Exception as e:
             st.error(f"Error: {e}")
 
 elif modo == "Cálculo Simbólico, Derivadas/Integrales y Plano Cartesiano":
-    st.subheader("∫ Motor Simbólico y Visualización Gráfica")
-
-    if "expr_val" not in st.session_state:
-        st.session_state.expr_val = "x**3 - 3*x"
-
-    def add_symbol(sym):
-        st.session_state.expr_val += sym
-
-    st.markdown("**⌨️ Teclado de Símbolos Rápidos:**")
-    c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = st.columns(11)
-
-    if c1.button("x"):
-        add_symbol("x")
-    if c2.button("+"):
-        add_symbol("+")
-    if c3.button("-"):
-        add_symbol("-")
-    if c4.button("*"):
-        add_symbol("*")
-    if c5.button("/"):
-        add_symbol("/")
-    if c6.button("^"):
-        add_symbol("**")
-    if c7.button("sin("):
-        add_symbol("sin(x)")
-    if c8.button("cos("):
-        add_symbol("cos(x)")
-    if c9.button("log("):
-        add_symbol("log(x)")
-    if c10.button("exp("):
-        add_symbol("exp(x)")
-    if c11.button("Clear"):
-        st.session_state.expr_val = ""
-
-    func_input = st.text_input("Función f(x):", key="expr_val")
-    operacion = st.radio(
-        "Operación analítica:",
-        ["Derivada d/dx", "Integral Indefinida", "Solo Graficar Función"],
-        horizontal=True,
+    st.subheader("∫ Motor Simbólico y Editor Dinámico del Plano Cartesiano")
+    st.markdown(
+        "Mueve los controles deslizantes o edita los parámetros para transformar el dibujo en tiempo real; la fórmula analítica se actualizará automáticamente."
     )
+
+    # Control interactivo de coeficientes para modelar dinámicamente el plano y la fórmula
+    col_param1, col_param2, col_param3, col_param4 = st.columns(4)
+    with col_param1:
+        coef_a = st.slider("Coeficiente a (Curvatura)", -5.0, 5.0, 1.0, 0.1)
+    with col_param2:
+        coef_b = st.slider("Coeficiente b (Pendiente)", -5.0, 5.0, 0.0, 0.1)
+    with col_param3:
+        coef_c = st.slider("Coeficiente c (Desplazamiento Y)", -10.0, 10.0, 0.0, 0.5)
+    with col_param4:
+        shift_x = st.slider("Desplazamiento X", -5.0, 5.0, 0.0, 0.5)
+
+    # Construir la función dinámica basada en los controles del plano cartesiano
+    func_input = f"{coef_a}*(x - {shift_x})**2 + {coef_b}*(x - {shift_x}) + {coef_c}"
+    st.info(f"📌 **Fórmula Actualizada Automáticamente:** `f(x) = {func_input}`")
 
     x = sp.Symbol("x")
 
-    if st.button("🚀 Procesar Análisis y Plano Cartesiano", type="primary"):
-        try:
-            expr = sp.sympify(func_input)
-            st.markdown("---")
-            st.subheader("📊 Resultados Analíticos")
+    try:
+        expr = sp.sympify(func_input)
+        st.markdown("---")
+        st.subheader("📊 Resultados Analíticos")
 
-            resultado_calculo = expr
-            if operacion == "Derivada d/dx":
-                resultado_calculo = sp.diff(expr, x)
-                st.latex(
-                    f"\\frac{{d}}{{dx}} \\left( {sp.latex(expr)} \\right) = {sp.latex(resultado_calculo)}"
-                )
-            elif operacion == "Integral Indefinida":
-                resultado_calculo = sp.integrate(expr, x)
-                st.latex(
-                    f"\\int \\left( {sp.latex(expr)} \\right) \\, dx = {sp.latex(resultado_calculo)} + C"
-                )
-            else:
-                st.latex(f"f(x) = {sp.latex(expr)}")
+        derivada = sp.diff(expr, x)
+        integral = sp.integrate(expr, x)
 
-            st.markdown("---")
-            st.subheader("📈 Plano Cartesiano (Gráfica Interactiva)")
+        st.latex(
+            f"f(x) = {sp.latex(expr)}"
+        )
+        st.latex(
+            f"\\frac{{d}}{{dx}} f(x) = {sp.latex(derivada)}"
+        )
+        st.latex(
+            f"\\int f(x) \\, dx = {sp.latex(integral)} + C"
+        )
 
-            f_lambdified = sp.lambdify(x, expr, modules=["numpy"])
-            x_vals = np.linspace(-10, 10, 400)
-            y_vals = f_lambdified(x_vals)
+        st.markdown("---")
+        st.subheader("📈 Plano Cartesiano Dinámico e Interactivo")
 
-            fig = go.Figure()
-            fig.add_trace(
-                go.Scatter(
-                    x=x_vals,
-                    y=y_vals,
-                    mode="lines",
-                    name=f"f(x) = {func_input}",
-                    line=dict(color="#00ffcc", width=3),
-                )
+        f_lambdified = sp.lambdify(x, expr, modules=["numpy"])
+        x_vals = np.linspace(-15, 15, 500)
+        y_vals = f_lambdified(x_vals)
+
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=x_vals,
+                y=y_vals,
+                mode="lines",
+                name=f"f(x)",
+                line=dict(color="#00ffcc", width=3.5),
             )
-            fig.update_layout(
-                title="Representación en el Plano Cartesiano 2D",
-                xaxis_title="Eje X",
-                yaxis_title="Eje Y",
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="#161b22",
-                font_color="white",
-                xaxis=dict(
-                    zeroline=True,
-                    zerolinewidth=2,
-                    zerolinecolor="gray",
-                    gridcolor="#30363d",
-                ),
-                yaxis=dict(
-                    zeroline=True,
-                    zerolinewidth=2,
-                    zerolinecolor="gray",
-                    gridcolor="#30363d",
-                ),
-            )
-            st.plotly_chart(fig, use_container_width=True)
-        except Exception as e:
-            st.error(f"Error de sintaxis matemática: {e}")
+        )
+        fig.update_layout(
+            title="Plano Cartesiano con Actualización Dinámica de Fórmula",
+            xaxis_title="Eje X",
+            yaxis_title="Eje Y",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="#161b22",
+            font_color="white",
+            xaxis=dict(
+                zeroline=True,
+                zerolinewidth=2,
+                zerolinecolor="gray",
+                gridcolor="#30363d",
+            ),
+            yaxis=dict(
+                zeroline=True,
+                zerolinewidth=2,
+                zerolinecolor="gray",
+                gridcolor="#30363d",
+            ),
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    except Exception as e:
+        st.error(f"Error al procesar la función dinámica: {e}")
+
+elif modo == "Geometría Avanzada (GeoGebra)":
+    st.subheader("📐 Entorno de Geometría Avanzada (GeoGebra integrado)")
+    st.markdown(
+        "Utiliza la plataforma oficial de GeoGebra directamente integrada en la aplicación web para construcciones geométricas, vectores, cónicas y análisis 3D."
+    )
+    # Incrustar GeoGebra Classic de forma interactiva
+    st.components.v1.iframe(
+        "https://www.geogebra.org/classic?embed", height=700, scrolling=True
+    )
 
 else:
     st.subheader("📐 Resolución de Sistemas Lineales")
